@@ -14,7 +14,7 @@ namespace BatteryStats
         // private Configuration configuration;
         private PowerStatus p = SystemInformation.PowerStatus;
 
-        private bool visible = false;
+        private bool visible = true;
         public bool Visible
         {
             get { return this.visible; }
@@ -30,7 +30,6 @@ namespace BatteryStats
         public void Dispose()
         {
             this.visible = false;
-            this.Dispose();
         }
 
         public void Draw()
@@ -78,17 +77,24 @@ namespace BatteryStats
                     ImGui.PopStyleColor();
                 }
 
-                if (chargeStatus.Equals(BatteryChargeStatus.Charging) && !secondsLeft.Equals(-1) && !percent.Equals(100))
+                if (chargeStatus.Equals(BatteryChargeStatus.Unknown))
                 {
-                    ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudYellow);
-                    ImGui.Text("Charging... " + percent.ToString() + @"%%");
+                    ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.ParsedPurple);
+                    ImGui.Text("???");
                     ImGui.PopStyleColor();
                 }
 
-                if (chargeStatus.Equals(BatteryChargeStatus.Charging) && secondsLeft.Equals(-1) && !percent.Equals(100))
+                if (chargeStatus.Equals(BatteryChargeStatus.NoSystemBattery))
                 {
-                    ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudYellow);
-                    ImGui.Text(percent.ToString() + @"%%");
+                    ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.ParsedPurple);
+                    ImGui.Text("No battery?");
+                    ImGui.PopStyleColor();
+                }
+
+                if (chargeStatus.Equals(BatteryChargeStatus.Charging))
+                {
+                    ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.HealerGreen);
+                    ImGui.Text("Charging... ");
                     ImGui.PopStyleColor();
                 }
 
@@ -112,8 +118,6 @@ namespace BatteryStats
                     ImGui.Text(percent.ToString() + @"%%");
                     ImGui.PopStyleColor();
                 }
-
-
             }
             ImGui.End();
         }
