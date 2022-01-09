@@ -35,10 +35,13 @@ namespace BatteryStats
             });
 
             this.PluginInterface.UiBuilder.Draw += DrawUI;
+            this.PluginInterface.UiBuilder.OpenConfigUi += DrawUI;
         }
 
         public void Dispose()
         {
+            this.PluginInterface.UiBuilder.Draw -= DrawUI;
+            this.PluginInterface.UiBuilder.OpenConfigUi -= DrawUI;
             this.PluginUi.Dispose();
             this.CommandManager.RemoveHandler(commandName);
         }
