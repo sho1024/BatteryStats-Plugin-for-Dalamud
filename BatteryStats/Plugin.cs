@@ -15,7 +15,7 @@ namespace BatteryStats
 
         private DalamudPluginInterface PluginInterface { get; init; }
         private CommandManager CommandManager { get; init; }
-        //private Configuration Configuration { get; init; }
+        private Configuration Configuration { get; init; }
         private PluginUI PluginUi { get; init; }
 
         public Plugin(
@@ -25,10 +25,8 @@ namespace BatteryStats
             this.PluginInterface = pluginInterface;
             this.CommandManager = commandManager;
 
-            //this.Configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            //this.Configuration.Initialize(this.PluginInterface);
-
-            // you might normally want to embed resources and load them from the manifest stream
+            this.Configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            this.Configuration.Initialize(this.PluginInterface);
             this.PluginUi = new PluginUI();
 
             this.CommandManager.AddHandler(commandName, new CommandInfo(OnCommand)
@@ -47,8 +45,7 @@ namespace BatteryStats
 
         private void OnCommand(string command, string args)
         {
-            // in response to the slash command, just display our main ui
-            this.PluginUi.Visible = true;
+            this.PluginUi.Visible = !this.PluginUi.Visible;
         }
 
         private void DrawUI()
