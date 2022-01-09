@@ -20,17 +20,17 @@
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>C:\Users\federico\AppData\Roaming\XIVLauncher\devPlugins\batteryStats\</OutputPath>
+    <OutputPath>..\dist\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\Data\batteryStats.json">
+    <Content Include=".\batteryStats.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <PropertyGroup>
-    <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+    <DalamudLibPath>..\dalamud\</DalamudLibPath>
     <AssemblyName>BatteryStats</AssemblyName>
     <RootNamespace>BatteryStats</RootNamespace>
   </PropertyGroup>

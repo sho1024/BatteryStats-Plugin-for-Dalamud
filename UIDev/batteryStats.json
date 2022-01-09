@@ -1,0 +1,11 @@
+{
+    "Author": "Sho",
+    "Name": "BatteryStats",
+    "Punchline": "Shows current charge using /batterystats",
+    "Description": "Shows current charge using /batterystats",
+    "InternalName": "batteryStats",
+    "ApplicableVersion": "any",
+    "Tags": [
+        "battery"
+    ]
+}
