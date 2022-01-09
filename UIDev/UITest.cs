@@ -1,6 +1,9 @@
 ﻿using ImGuiNET;
 using ImGuiScene;
 using System.Numerics;
+using System.Windows.Forms;
+//using Dalamud.Interface.Colors;
+
 
 namespace UIDev
 {
@@ -11,7 +14,6 @@ namespace UIDev
             UIBootstrap.Inititalize(new UITest());
         }
 
-        private TextureWrap? goatImage;
         private SimpleImGuiScene? scene;
 
         public void Initialize(SimpleImGuiScene scene)
@@ -20,7 +22,7 @@ namespace UIDev
             // but it can accomplish the same things, and is really only used for initial setup here
 
             // eg, to load an image resource for use with ImGui 
-            this.goatImage = scene.LoadImage("goat.png");
+            //this.goatImage = scene.LoadImage("goat.png");
 
             scene.OnBuildUI += Draw;
 
@@ -33,7 +35,7 @@ namespace UIDev
 
         public void Dispose()
         {
-            this.goatImage?.Dispose();
+            //this.goatImage?.Dispose();
         }
 
         // You COULD go all out here and make your UI generic and work on interfaces etc, and then
@@ -43,7 +45,6 @@ namespace UIDev
         private void Draw()
         {
             DrawMainWindow();
-            DrawSettingsWindow();
 
             if (!Visible)
             {
@@ -52,6 +53,8 @@ namespace UIDev
         }
 
         #region Nearly a copy/paste of PluginUI
+        // private Configuration configuration;
+
         private bool visible = false;
         public bool Visible
         {
@@ -59,59 +62,40 @@ namespace UIDev
             set { this.visible = value; }
         }
 
-        private bool settingsVisible = false;
-        public bool SettingsVisible
-        {
-            get { return this.settingsVisible; }
-            set { this.settingsVisible = value; }
-        }
-
-        // this is where you'd have to start mocking objects if you really want to match
-        // but for simple UI creation purposes, just hardcoding values works
-        private bool fakeConfigBool = true;
-
         public void DrawMainWindow()
         {
             if (!Visible)
             {
                 return;
             }
+            PowerStatus p = SystemInformation.PowerStatus;
+            BatteryChargeStatus chargeStatus = p.BatteryChargeStatus;
 
-            ImGui.SetNextWindowSize(new Vector2(375, 330), ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 330), new Vector2(float.MaxValue, float.MaxValue));
-            if (ImGui.Begin("My Amazing Window", ref this.visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
-            {
-                ImGui.Text($"The random config bool is {this.fakeConfigBool}");
+            ImGui.SetNextWindowSize(new Vector2(200, 30), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSizeConstraints(new Vector2(200, 35), new Vector2(200, 35));
+            if (ImGui.Begin("Power status", ref this.visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize ))
+            {   
+                int percent = (int)(p.BatteryLifePercent * 100);
 
-                if (ImGui.Button("Show Settings"))
+                int secondsLeft = (int)(p.BatteryLifeRemaining);
+                System.TimeSpan time = System.TimeSpan.FromSeconds(secondsLeft);
+                string timeLeft = time.ToString(@"hh\:mm");
+                ImGui.ProgressBar(p.BatteryLifePercent, new Vector2(188, 3), "");
+
+                if (!chargeStatus.Equals(BatteryChargeStatus.Charging))
                 {
-                    SettingsVisible = true;
+                    if (secondsLeft.Equals(-1))
+                    {
+                        ImGui.Text("Calculating time left..." + percent.ToString() + @"%%");
+                    }
+                    else
+                    {
+                        ImGui.Text(timeLeft + " " + percent.ToString() + @"%%");
+                    }
                 }
-
-                ImGui.Spacing();
-
-                ImGui.Text("Have a goat:");
-                ImGui.Indent(55);
-                ImGui.Image(this.goatImage!.ImGuiHandle, new Vector2(this.goatImage.Width, this.goatImage.Height));
-                ImGui.Unindent(55);
-            }
-            ImGui.End();
-        }
-
-        public void DrawSettingsWindow()
-        {
-            if (!SettingsVisible)
-            {
-                return;
-            }
-
-            ImGui.SetNextWindowSize(new Vector2(232, 75), ImGuiCond.Always);
-            if (ImGui.Begin("A Wonderful Configuration Window", ref this.settingsVisible,
-                ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
-            {
-                if (ImGui.Checkbox("Random Config Bool", ref this.fakeConfigBool))
+                else
                 {
-                    // nothing to do in a fake ui!
+                    ImGui.Text("Charging... " + percent.ToString() + @"%%");
                 }
             }
             ImGui.End();
